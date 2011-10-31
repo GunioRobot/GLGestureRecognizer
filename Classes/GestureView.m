@@ -35,26 +35,26 @@
 	recognizer = [[GLGestureRecognizer alloc] init];
 	NSData *jsonData = [NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Gestures" ofType:@"json"]];
 	[recognizer loadTemplatesFromJsonData:jsonData];
-	
+
 	self.caption = @"";
 }
 
-- (void)drawRect:(CGRect)rect 
+- (void)drawRect:(CGRect)rect
 {
     // Drawing code
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	CGContextSetRGBFillColor(ctx, 0, 0, 0, 1);
 	CGContextSetRGBStrokeColor(ctx, 1, 1, 1, 1);
 	CGContextFillRect(ctx, rect);
-	
+
 	CGContextSetRGBFillColor(ctx, 1, 1, 1, 1);
-	CGContextSetTextDrawingMode(ctx, kCGTextFillStroke); 
+	CGContextSetTextDrawingMode(ctx, kCGTextFillStroke);
 	CGContextSelectFont(ctx, "Helvetica", 20, kCGEncodingMacRoman);
-	CGContextSetTextMatrix(ctx, CGAffineTransformMakeScale(1, -1)); 
+	CGContextSetTextMatrix(ctx, CGAffineTransformMakeScale(1, -1));
 	CGContextShowTextAtPoint(ctx, 10, 30, [caption UTF8String], [caption length]);
-	
+
 	CGContextSetRGBFillColor(ctx, 0, 0, 0, 1);
-	
+
 	for (NSValue *pointValue in [recognizer touchPoints])
 	{
 		CGPoint pointInView = [pointValue CGPointValue];
@@ -76,7 +76,7 @@
 			CGContextAddLineToPoint(ctx, pointInView.x, pointInView.y);
 	}
 	CGContextStrokePath(ctx);
-	
+
 	CGContextSetRGBFillColor(ctx, 1, 0, 0, 1);
 	CGContextFillRect(ctx, CGRectMake(center.x, center.y, 4.0f, 4.0f));
 }
@@ -101,7 +101,7 @@
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
 	[recognizer addTouches:touches fromView:self];
-	
+
 	[self processGestureData];
 	[self setNeedsDisplay];
 }

@@ -3,11 +3,11 @@
 //  Gestures
 //
 //  Created by Adam Preble on 4/28/09.  adam@giraffelab.com
-//  
+//
 //  Largely an implementation of the $1 Unistroke Recognizer:
 //  http://depts.washington.edu/aimgroup/proj/dollar/
 //  Jacob O. Wobbrock, Andrew D. Wilson, Yang Li
-//  
+//
 #import "GLGestureRecognizer.h"
 
 #define kSamplePoints (16)
@@ -72,18 +72,18 @@ float DistanceAtBestAngle(CGPoint *samples, int samplePoints, CGPoint *template)
 	const int samplePoints = kSamplePoints;
 	CGPoint samples[samplePoints];
 	int c = [[self touchPoints] count];
-	
+
 	// Load up the samples.  We use a very simplistic method for this; the JavaScript version is much more sophisticated.
 	for (i = 0; i < samplePoints; i++)
 	{
 		samples[i] = [[[self touchPoints] objectAtIndex:MAX(0, (c-1)*i/(samplePoints-1))] CGPointValue];
 	}
-	
+
 	CGPoint center = Centroid(samples, samplePoints);
 	if (outCenter)
 		*outCenter = center;
 	Translate(samples, samplePoints, -center.x, -center.y); // Recenter
-	
+
 	// Now rotate the path around 0,0, since the points have been transformed to that point.
 	// Find the angle of the first point:
 	CGPoint firstPoint = samples[0];
@@ -92,7 +92,7 @@ float DistanceAtBestAngle(CGPoint *samples, int samplePoints, CGPoint *template)
 	if (outRadians)
 		*outRadians = firstPointAngle;
 	Rotate(samples, samplePoints, -firstPointAngle);
-	
+
 	CGPoint lowerLeft, upperRight; // For finding the boundaries of the gesture
 	for (i = 0; i < samplePoints; i++)
 	{
@@ -108,10 +108,10 @@ float DistanceAtBestAngle(CGPoint *samples, int samplePoints, CGPoint *template)
 	}
 	float scale = 2.0f/MAX(upperRight.x - lowerLeft.x, upperRight.y - lowerLeft.y);
 	Scale(samples, samplePoints, scale, scale);
-	
+
 	center = Centroid(samples, samplePoints);
 	Translate(samples, samplePoints, -center.x, -center.y); // Recenter
-	
+
 	// Now we can compare the samples against our known samples:
 	NSString *bestTemplateName = nil;
 	float best = INFINITY;
@@ -135,14 +135,14 @@ float DistanceAtBestAngle(CGPoint *samples, int samplePoints, CGPoint *template)
 	NSLog(@"Best: %@ with %0.2f", bestTemplateName, best);
 	if (outScore)
 		*outScore = best;
-	
+
 	self.resampledPoints = [NSMutableArray arrayWithCapacity:samplePoints];
 	for (i = 0; i < samplePoints; i++)
 	{
 		CGPoint pt = samples[i];
 		[resampledPoints addObject:[NSValue valueWithCGPoint:pt]];
 	}
-	
+
 	// Serialize the samples as JSON:
 #ifndef NDEBUG
 	NSMutableString *string = [NSMutableString stringWithString:@"\"template_name\": [ "];
